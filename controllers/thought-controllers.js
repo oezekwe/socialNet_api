@@ -1,4 +1,4 @@
-const {Thought}= require('../models');
+const {Thought, User}= require('../models');
 
 const thoughtController= {
     getAllThoughts(req, res){
@@ -28,7 +28,13 @@ const thoughtController= {
     createThought({body}, res){
         Thought.create(body)
         .then(thoughtData=>{
-            res.json(thoughtData);
+            return User.findOneAndUpdate(
+                {_id: body.userId},
+                {$push : {'thoughts': thoughtData._id}}
+            )
+        })
+        .then(userData=>{
+            res.json(userData);
         })
         .catch(err=>{
             res.json(err);
