@@ -62,10 +62,11 @@ const userController= {
         });
     },
     
-    addFriend({body}, res){
-        User.create(body)
-        .then(({_id})=>
-            User.findOneAndUpdate({}, {$push: { friends: _id }}, {new: true} )
+    addFriend({params}, res){
+        User.findOneAndUpdate(
+            {_id: params.userId}, 
+            {$push: { friends: params.friendId }}, 
+            {new: true} 
         )
         .then(userData=>{
             res.json(userData);
@@ -76,13 +77,11 @@ const userController= {
     },
 
     removeFriend({params}, res){
-        User.findOneAndRemove({_id: params.id})
-        .then(deleteFriend=>{
-            if(!deleteFriend){
-                res.json('No friend with this ID');
-            }
-            User.findOneAndUpdate({}, {$pull: { friends: params.id }}, {new: true} )
-        })
+        User.findOneAndUpdate(
+            {_id: params.userId}, 
+            {$pull: { friends: params.friendId }}, 
+            {new: true} 
+        )
         .then(userData=>{
             res.json(userData);
         })

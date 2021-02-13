@@ -68,27 +68,28 @@ const thoughtController= {
         });
     },
     
-    createReaction({body}, res){
-        Thought.create(body)
-        .then(({_id})=>
-            Thought.findOneAndUpdate({}, {$push: { reactions: _id }}, {new: true} )
+    createReaction({params, body}, res){
+        //console.log(params.id);
+        Thought.findOneAndUpdate(
+            {_id: params.thoughtId}, 
+            {$push: { reactions: body }}, 
+            {new: true, runValidators: true} 
         )
         .then(thoughtData=>{
             res.json(thoughtData);
         })
         .catch(err=>{
+            console.log(err);
             res.json(err);
         });
     },
 
     removeReaction({params}, res){
-        Thought.findOneAndRemove({_id: params.id})
-        .then(deleteReaction=>{
-            if(!deleteReaction){
-                res.json('No reaction with this ID');
-            }
-            Thought.findOneAndUpdate({}, {$pull: { reactions: params.id }}, {new: true} )
-        })
+        Thought.findOneAndUpdate(
+            {_id: params.thoughtId}, 
+            {$pull: { reactions: {reactionId: params.reactionId} } }, 
+            {new: true} 
+        )
         .then(thoughtData=>{
             res.json(thoughtData);
         })
