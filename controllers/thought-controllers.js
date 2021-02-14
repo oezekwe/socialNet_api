@@ -15,7 +15,7 @@ const thoughtController= {
         Thought.findOne({_id: params.id})
         .then(thoughtData=>{
             if(!thoughtData){
-                res.status(404).json({ message: 'No thought with this id!' });
+                res.status(404).json({ message: 'No thought has this id!' });
                 return;
             }
             res.json(thoughtData);
@@ -30,7 +30,7 @@ const thoughtController= {
         .then(thoughtData=>{
             return User.findOneAndUpdate(
                 {_id: body.userId},
-                {$push : {'thoughts': thoughtData._id}}
+                {$push : {thoughts: thoughtData._id}}
             )
         })
         .then(userData=>{
@@ -69,7 +69,6 @@ const thoughtController= {
     },
     
     createReaction({params, body}, res){
-        //console.log(params.id);
         Thought.findOneAndUpdate(
             {_id: params.thoughtId}, 
             {$push: { reactions: body }}, 
